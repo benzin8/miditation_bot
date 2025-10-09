@@ -3,7 +3,7 @@ from pydantic_settings import BaseSettings
 class Settings(BaseSettings):
     bot_token: str
     admin_id: int
-    # db_url: str
+    db_url: str
     # app_host: str
     # app_port: int
 
