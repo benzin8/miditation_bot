@@ -12,7 +12,7 @@ async def create_user(telegram_id: int, name: str = None, email: str = None):
         if user is not None:
             if user.telegram_id != telegram_id:
                 user.telegram_id = telegram_id
-            await session.commit()
+                await session.commit()
             return user
         else:
             user = User(
@@ -24,3 +24,20 @@ async def create_user(telegram_id: int, name: str = None, email: str = None):
             print(f"Новый пользователь ID:{telegram_id}")
             await session.commit()
 
+async def add_name(telegram_id: int, name: str = None, is_registrated: bool = None):
+    async with async_session() as session:
+        result = await session.execute(
+            select(User).where(User.telegram_id == telegram_id)
+        )
+        user = result.scalar_one_or_none()
+        
+        if user:
+            if user.is_registrated == False or user.is_registrated is None:
+                user.name = name
+                user.is_registrated = is_registrated
+                await session.commit()
+                return user
+            else:
+                print(f"Пользователь {telegram_id} уже зарегистрирован")
+                return False
+        
