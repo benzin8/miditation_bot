@@ -14,4 +14,4 @@ if __name__ == "__main__":
     import asyncio
     users = asyncio.run(get_users())
     for user in users:
-        print(f"ID: {user.user_id}, Telegram_id: {user.telegram_id}")
+        print(f"ID: {user.user_id}, Telegram_id: {user.telegram_id}, Name: {user.name}, Registration: {user.is_registrated}")
