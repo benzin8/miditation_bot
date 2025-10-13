@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float, Text, BigInteger
+from sqlalchemy import Column, Integer, String, Float, Text, BigInteger, Boolean
 from backend.models.base import Base
 
 class User(Base):
@@ -8,6 +8,7 @@ class User(Base):
     telegram_id = Column(BigInteger, unique=True, nullable=False)
     name = Column(String(100), nullable=True)
     email = Column(String(100), nullable=True)
+    is_registrated = Column(Boolean(False))
 
     def __repr__(self):
         return f"<User(name= {self.name}, telegram_id= {self.telegram_id})>"
