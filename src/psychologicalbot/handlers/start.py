@@ -11,4 +11,4 @@ async def start_command(message: Message):
     await create_user(
         telegram_id=telegram_id
     )
-    await message.answer(f"Здравствуйте! Укажите свое имя")
+    await message.answer(f"Здравствуйте! Завершите регистрацию командой /registration")
