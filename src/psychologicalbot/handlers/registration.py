@@ -5,7 +5,7 @@ from aiogram.fsm.state import StatesGroup, State
 from aiogram.fsm.context import FSMContext
 from core.database import async_session
 
-from backend.services import add_name
+from backend.services import add_name, add_email
 
 register_router = Router()
 
@@ -16,11 +16,13 @@ class RegistrationStates(StatesGroup):
 
 @register_router.message(Command("registration"))
 async def registration(message: Message, state: FSMContext):
-    result = await add_name(
+    result_name = await add_name(
         telegram_id= message.from_user.id,
-        # name=message.from_user.first_name or "Неизвестный"
     )
-    if result == False:
+    # result_email = await add_email(
+    #     telegram_id= message.from_user.id
+    # )
+    if result_name == False:
         await message.answer("Вы уже зарегистрированы.")
         return
     else:
@@ -43,20 +45,46 @@ async def name_process(message: Message, state: FSMContext):
         user = await add_name(
             telegram_id= message.from_user.id,
             name=name,
-            is_registrated=True
       )
    
         print(f"Имя для пользователя {message.from_user.id} добавленно - {name}")
         if user:
             await message.answer(
                 f"✅ Отлично, {name}!\n"
-                f"Регистрация завершена.\n"
-                f"Ваш ID: {user.telegram_id}"
+                f"Пожалуйста, введите ваш email:\n"
             )
             await state.clear()
+        await state.set_state(RegistrationStates.waiting_for_email)
+
 
     except Exception as e:
         print(f"Ошибка при добавлении имени для пользователя {message.from_user.id}: {e}")
         await message.answer("Произошла ошибка")
 
 
+@register_router.message(RegistrationStates.waiting_for_email)
+async def email_process(message: Message, state: FSMContext):
+    email = message.text.strip()
+
+    if "@" not in email or "." not in email:
+        await message.answer("❌ Пожалуйста, введите корректный email:")
+        return
+    
+    if len(email) > 100:
+        await message.answer("❌ Слишком длинный email. Введите покороче:")
+        return
+    
+    try:
+        await add_email(
+            telegram_id=message.from_user.id,
+            email=email,
+            is_registrated=True
+        )
+    except Exception as e:
+        print(f"Ошибка при добавлении email для пользователя {message.from_user.id}: {e}")
+        await message.answer("Произошла ошибка при сохранении email. Попробуйте еще раз.")
+        return
+        
+    await message.answer(f"✅ Спасибо! Ваш email {email} сохранен.\n"
+                         f"Регистрация завершена.")
+    await state.clear()
