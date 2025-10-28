@@ -51,3 +51,12 @@ async def add_email(telegram_id: int, email: str, is_registrated: bool = None):
             user.is_registrated = is_registrated
             await session.commit()
             return user
+        
+
+async def get_user(telegram_id: int):
+    async with async_session() as session:
+        result = await session.execute(
+            select(User).where(User.telegram_id == telegram_id)
+        )
+        user = result.scalar_one_or_none()
+        return user
