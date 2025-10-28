@@ -1,7 +1,7 @@
 from aiogram import Router
 from aiogram.filters import Command
 from aiogram.types import Message
-from backend.services import create_user
+from backend.services import create_user, get_user
 
 start_router = Router()
 
@@ -11,4 +11,8 @@ async def start_command(message: Message):
     await create_user(
         telegram_id=telegram_id
     )
-    await message.answer(f"Здравствуйте! Завершите регистрацию командой /registration")
+    user = await get_user(telegram_id=telegram_id)
+    if user.is_registrated == True:
+        await message.answer("Здравствуйте! Рады видеть вас снова.")
+    else:
+        await message.answer(f"Здравствуйте! Завершите регистрацию командой /registration")
