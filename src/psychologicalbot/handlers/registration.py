@@ -6,6 +6,7 @@ from aiogram.fsm.context import FSMContext
 from core.database import async_session
 
 from backend.services import add_name, add_email
+from psychologicalbot.keyboards import TaskKeyboards
 
 register_router = Router()
 
@@ -15,6 +16,7 @@ class RegistrationStates(StatesGroup):
 
 
 @register_router.message(Command("registration"))
+@register_router.message(F.text == "Регистрация")
 async def registration(message: Message, state: FSMContext):
     result_name = await add_name(
         telegram_id= message.from_user.id,
@@ -87,4 +89,5 @@ async def email_process(message: Message, state: FSMContext):
         
     await message.answer(f"✅ Спасибо! Ваш email {email} сохранен.\n"
                          f"Регистрация завершена.")
+    await message.answer("Выберите действие:", reply_markup=await TaskKeyboards.get_task_keyboard())
     await state.clear()
