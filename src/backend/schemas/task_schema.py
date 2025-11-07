@@ -12,7 +12,7 @@ class TaskCreate(TaskSchema):
     pass
 
 class TaskResponse(TaskSchema):
-    id: int = Field(..., alias="taks_id")
+    id: int = Field(..., alias="task_id")
 
     class Config:
         from_attributes = True
