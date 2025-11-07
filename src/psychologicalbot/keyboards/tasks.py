@@ -12,4 +12,10 @@ class TaskKeyboards:
             ],
             resize_keyboard=True
         )
-    
+    async def manage_task_keyboard() -> ReplyKeyboardMarkup:
+        return ReplyKeyboardMarkup(
+            keyboard=[
+                [KeyboardButton(text="Выполнить")]
+            ],
+            resize_keyboard= True
+        )
